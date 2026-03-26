@@ -3,10 +3,11 @@ from rest_framework.response import Response
 import requests
 import json
 import random
-
 import os
 
+# 🔐 Secure API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
 
 # 🟦 PROJECTS API
 @api_view(['GET'])
@@ -84,7 +85,7 @@ def projects(request):
     ])
 
 
-# 🤖 AI CALL
+# 🤖 AI GENERATION (IMPROVED 🔥)
 def generate_ai_tests(description):
     url = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -97,19 +98,25 @@ User story:
 Generate STRICT JSON only.
 
 Requirements:
-- At least 3 test cases in each category
-- No empty arrays
+- Generate 8-12 test cases for each category
+- Make them detailed and realistic
+- Include:
+  - Validation cases
+  - Boundary cases
+  - Security cases (SQL injection, XSS)
+  - Performance scenarios
+- Avoid generic sentences
 
 Format:
 {{
   "analysis": {{
     "feature": "{description}",
-    "inputs": ["input1", "input2"],
+    "inputs": ["email", "password"],
     "expected": "expected behavior"
   }},
-  "positive": ["", "", ""],
-  "negative": ["", "", ""],
-  "edge": ["", "", ""],
+  "positive": [],
+  "negative": [],
+  "edge": [],
   "risk": "Low/Medium/High",
   "confidence": 80
 }}
@@ -134,12 +141,49 @@ Format:
     except Exception:
         return json.dumps({
             "analysis": {},
-            "positive": ["Valid input works"],
-            "negative": ["Invalid input fails"],
+            "positive": ["Valid login with correct credentials"],
+            "negative": ["Invalid password should fail"],
             "edge": ["Empty input handled"],
             "risk": "Medium",
             "confidence": 70
         })
+
+
+# 🧪 EXECUTION SIMULATION
+def execute_tests(test_cases):
+    execution_details = []
+    passed = 0
+    failed = 0
+
+    for test in test_cases:
+        if "invalid" in test.lower() or "fail" in test.lower():
+            status = "Failed"
+        else:
+            status = random.choice(["Passed", "Passed", "Failed"])
+
+        execution_details.append({
+            "test": test,
+            "status": status,
+            "time": random.randint(20, 200),
+            "browser": "Chrome",
+            "error": "-" if status == "Passed" else "Assertion failed"
+        })
+
+        if status == "Passed":
+            passed += 1
+        else:
+            failed += 1
+
+    total = len(test_cases)
+    pass_rate = (passed / total) * 100 if total > 0 else 50
+
+    return {
+        "total": total,
+        "passed": passed,
+        "failed": failed,
+        "details": execution_details,
+        "pass_rate": pass_rate
+    }
 
 
 # 🔥 MAIN API
@@ -159,32 +203,16 @@ def generate_tests(request):
         except:
             data = {}
 
-        # ✅ SAFE FALLBACKS
-        positive = data.get("positive") or [
-            "Valid input should work",
-            "Correct data returns success",
-            "System behaves as expected"
-        ]
-
-        negative = data.get("negative") or [
-            "Invalid input should fail",
-            "Wrong credentials rejected",
-            "System handles errors"
-        ]
-
-        edge = data.get("edge") or [
-            "Empty input handled",
-            "Max limit handled",
-            "Special characters handled"
-        ]
+        # ✅ FALLBACKS
+        positive = data.get("positive") or ["Valid input works"] * 8
+        negative = data.get("negative") or ["Invalid input fails"] * 8
+        edge = data.get("edge") or ["Edge case handled"] * 8
 
         risk = data.get("risk", "Medium")
 
         all_tests = positive + negative + edge
 
-        # 🔥 DYNAMIC INITIAL CONFIDENCE
-        total_tests = len(all_tests)
-
+        # 🎯 INITIAL CONFIDENCE
         if risk == "High":
             base_conf = 60
         elif risk == "Medium":
@@ -192,36 +220,16 @@ def generate_tests(request):
         else:
             base_conf = 85
 
-        initial_confidence = min(base_conf + total_tests, 95)
+        initial_confidence = min(base_conf + len(all_tests), 95)
 
-        # 🧪 EXECUTION (SMART LOGIC)
-        execution_details = []
-        passed = 0
-        failed = 0
-
-        for test in all_tests:
-            if "invalid" in test.lower() or "fail" in test.lower():
-                status = "Failed"
-            else:
-                status = random.choice(["Passed", "Passed", "Failed"])
-
-            execution_details.append({
-                "test": test,
-                "status": status,
-                "time": random.randint(10, 200),
-                "browser": "Chrome"
-            })
-
-            if status == "Passed":
-                passed += 1
-            else:
-                failed += 1
-
-        total = len(all_tests)
-        pass_rate = (passed / total) * 100 if total > 0 else 50
+        # 🧪 EXECUTION
+        execution = execute_tests(all_tests)
 
         # 📊 FINAL CONFIDENCE
-        final_confidence = int((initial_confidence * 0.6) + (pass_rate * 0.4))
+        final_confidence = int(
+            (initial_confidence * 0.6) +
+            (execution["pass_rate"] * 0.4)
+        )
 
         # 🎯 PRIORITY
         if final_confidence < 60 or risk == "High":
@@ -242,12 +250,7 @@ def generate_tests(request):
             "initial_confidence": f"{initial_confidence}%",
             "final_confidence": f"{final_confidence}%",
             "priority": priority,
-            "execution": {
-                "total": total,
-                "passed": passed,
-                "failed": failed,
-                "details": execution_details
-            }
+            "execution": execution
         })
 
     except Exception as e:
