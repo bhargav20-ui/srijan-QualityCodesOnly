@@ -146,10 +146,10 @@ This backend enables a complete AI-driven testing pipeline:
 
 ## ▶️ How to Run Locally
 
+▶️ How to Run Locally
 ###1️⃣ Clone the repository
 git clone https://github.com/bhargav20-ui/srijan-QualityCodesOnly.git
-
-cd srijan-QualityCodesOnly.git
+cd srijan-QualityCodesOnly/backend
 
 ###2️⃣ Install dependencies
 pip install -r requirements.txt
