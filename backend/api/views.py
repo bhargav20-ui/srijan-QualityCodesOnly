@@ -130,7 +130,7 @@ Format:
                 "Content-Type": "application/json"
             },
             json={
-                "model": "openai/gpt-4o-mini",
+                "model": "openai/gpt-4o",
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
