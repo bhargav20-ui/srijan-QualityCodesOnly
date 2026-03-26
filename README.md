@@ -141,3 +141,7 @@ This backend enables a complete AI-driven testing pipeline:
 - Django REST Framework  
 - OpenRouter API (LLM)  
 - JSON-based API architecture  
+
+---
+
+Built with passion ❤️ and powered by innovation 🚀 by **Kamal Sushank** and **Vinay Venkata Bhargav** 🌟
