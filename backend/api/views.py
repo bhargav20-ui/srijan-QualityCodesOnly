@@ -4,7 +4,9 @@ import requests
 import json
 import random
 
-OPENROUTER_API_KEY = "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"
+import os
+
+OPENROUTER_API_KEY = os.getenv("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")
 
 # 🟦 PROJECTS API
 @api_view(['GET'])
