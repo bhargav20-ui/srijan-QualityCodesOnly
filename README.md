@@ -149,7 +149,7 @@ This backend enables a complete AI-driven testing pipeline:
 ###1️⃣ Clone the repository
 git clone https://github.com/bhargav20-ui/srijan-QualityCodesOnly.git
 
-cd srijan-QualityCodesOnly/backend
+cd srijan-QualityCodesOnly/backend.git
 
 ###2️⃣ Install dependencies
 pip install -r requirements.txt
