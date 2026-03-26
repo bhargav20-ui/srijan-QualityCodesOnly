@@ -6,7 +6,7 @@ import random
 
 import os
 
-OPENROUTER_API_KEY = os.getenv("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")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # 🟦 PROJECTS API
 @api_view(['GET'])
